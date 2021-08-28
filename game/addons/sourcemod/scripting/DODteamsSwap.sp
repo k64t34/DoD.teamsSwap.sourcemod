@@ -1,4 +1,4 @@
-#define nDEBUG 1
+#define DEBUG 1
 #define PLUGIN_VERSION "1.0"
 #define PLUGIN_NAME "DoD Teams swap"
 #define GAME_DOD
@@ -61,6 +61,24 @@ public void OnMapStart(){
 	DebugPrint("OnMapStart");
 	#endif 
 	g_1stChange=0;
+	//int entScore = FindEntityByClassname(-1, "dod_team_scores");	
+	int entScore = GetTeamEntity(DOD_TEAM_AXIS);
+	PrintToServer("game_player_team entScore= %d",entScore);
+	char s[128];
+	GetEntPropString(entScore,Prop_Data,"m_iClassname",s,100,0);//http://world-source.ru/datamaps.txt
+	PrintToServer("s= %s",s);	
+	int i;
+	i=GetEntProp(entScore, Prop_Data, "allies_caps", 4,0);
+	PrintToServer("i= %d",i);
+	/*"dod_team_scores"
+	{
+		"allies_caps"	"short"		// how many rounds won by Allies
+		"allies_tick"	"short"		// how many tick points Allies have
+		"allies_players"	"byte"	// how many players Allies have
+		"axis_caps"		"short"		// .. same for Axis.
+		"axis_tick"		"short"
+		"axis_players"	"byte"
+	}*/
 }
 public void OnCvar_dod_teamsSwap(ConVar convar, char[] oldValue, char[] newValue){
 	if (StringToInt(oldValue)==0 && StringToInt(newValue)!=0)
@@ -89,6 +107,7 @@ public  Action teamsSwap (int args){
 	if (g_1stChange==0)
 	{
 		LogToGame("Teams swap start");		
+		LogToGame("Reverse team start");
 		g_1stChange++;
 	}
 	PrintToChatAll("\x01\x04Teams swap ");
@@ -116,6 +135,10 @@ public  Action teamsSwap (int args){
 		}
 	}			
 	Cvar_mp_limitteams.IntValue=old_mp_limitteams;
+	//Swap Team Score	
+	//int swTeamScore=GetTeamScore(DOD_TEAM_ALLIES);
+	//SetTeamScore(DOD_TEAM_ALLIES, GetTeamScore(DOD_TEAM_AXIS));
+	//SetTeamScore(DOD_TEAM_AXIS, swTeamScore);
 }
 
 #endinput
