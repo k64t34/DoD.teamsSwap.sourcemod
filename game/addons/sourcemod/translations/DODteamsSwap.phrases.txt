@@ -4,5 +4,6 @@
   {
     "en"    "Melee till victory"
     "ru"    "Рукопашный бой до победы"
+    "da"    "Nærmap indtil sejr"
   }
 }
