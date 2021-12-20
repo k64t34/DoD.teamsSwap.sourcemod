@@ -17,6 +17,7 @@ After map changed parameter `dod_teamsSwap` will set to 0.
 
 If map config file not contain parameter `dod_teamsSwap 1`, there will no swap teams on map.
 
+---
 ```RU``` Некоторые карты с таймером (например: dod_jagd, dod_foy_rc1, dod_strand, dod_aubercy_b5) требуют игрового баланса.
 
 Этот плагин автоматически меняет местами команды игроков в конце раунда.
