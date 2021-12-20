@@ -1,9 +1,8 @@
 "Phrases"
 {
-  "Melee"
+  "Teams will be swapped in"
   {
-    "en"    "Melee till victory"
-    "ru"    "Рукопашный бой до победы"
-    "da"    "Nærmap indtil sejr"
+    "en"    "Teams will be swapped in"
+    "ru"    "Обмен командами будет через"    
   }
 }
