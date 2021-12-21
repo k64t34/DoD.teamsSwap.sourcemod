@@ -1,5 +1,5 @@
 #define noDEBUG 1
-#define PLUGIN_VERSION "1.3"
+#define PLUGIN_VERSION "1.4"
 #define PLUGIN_NAME "DoD Teams swap"
 #define GAME_DOD
 #define SND_GONG "k64t\\whistle.mp3" 
@@ -32,7 +32,7 @@ LoadTranslations("DODteamsSwap.phrases");
 char buffer[MAX_FILENAME_LENGHT];
 Format(buffer, MAX_FILENAME_LENGHT, /*"download\\*/"sound\\%s",SND_GONG);	
 AddFileToDownloadsTable(buffer);
-Cvar_teamsSwap = CreateConVar("dod_teamsSwap", "0", "Enables/Disables teams swap <0 to disable | # of rounds>");
+Cvar_teamsSwap = CreateConVar("dod_teamsSwap", "0", "Enables/Disables teams swap <0 to disable | 1 to enable>");
 if (Cvar_teamsSwap != null)Cvar_teamsSwap.AddChangeHook(OnCvar_dod_teamsSwap);
 Cvar_mp_limitteams =	FindConVar("mp_limitteams");
 Cvar_dod_bonusroundtime = FindConVar("dod_bonusroundtime");
@@ -40,8 +40,7 @@ Cvar_dod_bonusroundtime = FindConVar("dod_bonusroundtime");
 public void OnPluginEnd(){
 	if (Cvar_teamsSwap.IntValue!=0)
 	{
-		UnhookEvent("dod_round_win", Event_RoundWin, EventHookMode_Post);
-		//UnhookEvent("player_team", ChangeTeam, EventHookMode_Pre);
+		UnhookEvent("dod_round_win", Event_RoundWin, EventHookMode_Post);//UnhookEvent("player_team", ChangeTeam, EventHookMode_Pre);
 	}
 }
 public void OnMapStart(){
