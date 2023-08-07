@@ -1,5 +1,5 @@
-#define noDEBUG 1
-#define PLUGIN_VERSION "1.4"
+#define noDEBUG 
+#define PLUGIN_VERSION "1.5"
 #define PLUGIN_NAME "DoD Teams swap"
 #define GAME_DOD
 #define SND_GONG "k64t\\whistle.mp3" 
@@ -25,7 +25,7 @@ public Plugin myinfo =
 public void OnPluginStart(){
 //***********************************************
 #if defined DEBUG
-DebugPrint("OnPluginStart");
+DebugLog("OnPluginStart");
 RegServerCmd("teamsSwap",teamsSwap);
 #endif 
 LoadTranslations("DODteamsSwap.phrases");
@@ -40,12 +40,12 @@ Cvar_dod_bonusroundtime = FindConVar("dod_bonusroundtime");
 public void OnPluginEnd(){
 	if (Cvar_teamsSwap.IntValue!=0)
 	{
-		UnhookEvent("dod_round_win", Event_RoundWin, EventHookMode_Post);//UnhookEvent("player_team", ChangeTeam, EventHookMode_Pre);
+		UnhookEvent("dod_round_win", Event_RoundWin);//, EventHookMode_Post);//UnhookEvent("player_team", ChangeTeam, EventHookMode_Pre);
 	}
 }
 public void OnMapStart(){
 	#if defined DEBUG
-	DebugPrint("OnMapStart");
+	DebugLog("OnMapStart");
 	#endif 
 	g_1stChange=0;	
 }
@@ -64,8 +64,8 @@ public void Event_RoundWin(Event event, const char[] name,  bool dontBroadcast){
 	else
 	{		
 		#if defined DEBUG
-		DebugPrint("Event_RoundWin");
-		DebugPrint("%t",MSG_Teams_will_be_swapped);
+		DebugLog("Event_RoundWin");
+		DebugLog("%t",MSG_Teams_will_be_swapped);
 		#endif 
 		PrintToChatAll("\x01\x04%t %i seconds",MSG_Teams_will_be_swapped,Cvar_dod_bonusroundtime.IntValue);		
 		CreateTimer(float(Cvar_dod_bonusroundtime.IntValue),Delay_teamsSwap,_,TIMER_FLAG_NO_MAPCHANGE);		
@@ -74,7 +74,7 @@ public void Event_RoundWin(Event event, const char[] name,  bool dontBroadcast){
 public  Action Delay_teamsSwap (Handle timer){teamsSwap(0);return Plugin_Stop;}
 public  Action teamsSwap (int args){
 	#if defined DEBUG
-	DebugPrint("teamsSwap");
+	DebugLog("teamsSwap");
 	#endif 
 	if (g_1stChange==0)
 	{
@@ -89,8 +89,11 @@ public  Action teamsSwap (int args){
 	int old_mp_limitteams=Cvar_mp_limitteams.IntValue;
 	Cvar_mp_limitteams.IntValue=20;
 	int team;
+	//Event event = CreateEvent("player_changeclass");if (event==INVALID_HANDLE) LogError("CreateEvent(player_changeclass) INVALID_HANDLE"); 
+	int class;
 	for (int i=1;i<=MaxClients;i++)
 	{
+		if (IsClientConnected(i))
 		if (IsClientInGame(i))
 		{
 			team=GetClientTeam(i);
@@ -105,7 +108,21 @@ public  Action teamsSwap (int args){
 				ChangeClientTeam(i,DOD_TEAM_SPECTATOR);
 				ChangeClientTeam(i,DOD_TEAM_ALLIES);		
 				ShowVGUIPanel(i, "class_us", INVALID_HANDLE, false);				
-			}			
+			}	
+		
+		class=GetDODPlayerClass(i);//ver 1.5
+		if (class!=DOD_NoClass)
+			{
+			Event event = CreateEvent("player_changeclass");
+			if (event==INVALID_HANDLE) 
+				LogError("CreateEvent(player_changeclass) return INVALID_HANDLE"); 
+			else
+				{		 			
+				event.SetInt("userid",GetClientUserId(i));			
+				event.SetInt("class", class);
+				event.Fire();			
+				}
+			}
 		}
 	}			
 	Cvar_mp_limitteams.IntValue=old_mp_limitteams;
@@ -116,6 +133,7 @@ public  Action teamsSwap (int args){
 	swTeamScore=GetTeamRoundsWon(DOD_TEAM_ALLIES);
 	SetTeamRoundsWon(DOD_TEAM_ALLIES, GetTeamRoundsWon(DOD_TEAM_AXIS));
 	SetTeamRoundsWon(DOD_TEAM_AXIS, swTeamScore);
+	return Plugin_Continue;
 }
 	
 
