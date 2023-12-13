@@ -83,7 +83,7 @@ public  Action teamsSwap (int args){
 		g_1stChange++;
 	}
 	//PrintToChatAll("\x01\x04Teams swap ");
-	PrecacheSound(SND_GONG,true);
+	//PrecacheSound(SND_GONG,true);
 	EmitSoundToAll(SND_GONG);
 	
 	int old_mp_limitteams=Cvar_mp_limitteams.IntValue;
